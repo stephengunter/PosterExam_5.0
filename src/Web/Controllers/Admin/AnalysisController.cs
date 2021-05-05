@@ -181,16 +181,6 @@ namespace Web.Controllers.Admin
 
 			return model;
 		}
-
-		[HttpPost("exam-settings")]
-		public ActionResult Store([FromBody] ExamSettingsViewModel model)
-		{
-			//Save ExamSettings
-
-			var subjectId = model.SubjectId;
-
-			return Ok();
-		}
 		
 	}
 }

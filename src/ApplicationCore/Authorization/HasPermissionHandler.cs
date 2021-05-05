@@ -17,7 +17,7 @@ namespace ApplicationCore.Authorization
 
 			if (permissione == Permissions.Subscriber)
 			{
-				if(context.CurrentUserIsSubscriber())
+				if(context.User.Claims.IsSubscriber())
 				{
 					context.Succeed(requirement);
 					return Task.CompletedTask;
@@ -25,7 +25,7 @@ namespace ApplicationCore.Authorization
 			}
 			else if(permissione == Permissions.Admin)
 			{
-				if(context.CurrentUserIsBoss() || context.CurrentUserIsDev())
+				if(context.User.Claims.IsBoss() || context.User.Claims.IsDev())
 				{
 					context.Succeed(requirement);
 					return Task.CompletedTask;

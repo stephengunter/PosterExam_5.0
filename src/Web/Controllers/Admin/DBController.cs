@@ -34,6 +34,53 @@ namespace Web.Controllers.Admin
 			_dBImportService = dBImportService;
 		}
 
+		#region Properties
+
+		string _connectionString;
+		string ConnectionString
+		{
+			get
+			{
+				if (String.IsNullOrEmpty(_connectionString))
+				{
+					_connectionString = _context.Database.GetDbConnection().ConnectionString;
+				}
+				return _connectionString;
+			}
+		}
+
+		string _dbName;
+		string DbName
+		{
+			get
+			{
+				if (String.IsNullOrEmpty(_dbName))
+				{
+					_dbName = new SqlConnectionStringBuilder(ConnectionString).InitialCatalog;
+				}
+				return _dbName;
+			}
+		}
+
+
+
+		string _backupFolder;
+		string BackupFolder
+		{
+			get
+			{
+				if (String.IsNullOrEmpty(_backupFolder))
+				{
+					var path = Path.Combine(_adminSettings.BackupPath, DateTime.Today.ToDateNumber().ToString());
+					if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+					_backupFolder = path;
+				}
+				return _backupFolder;
+			}
+		}
+		#endregion
+
 		async Task<string> ReadFileTextAsync(IFormFile file)
 		{
 			var result = new StringBuilder();
@@ -46,14 +93,7 @@ namespace Web.Controllers.Admin
 		}
 
 		[HttpGet("dbname")]
-		public ActionResult DBName()
-		{
-			var connectionString = _context.Database.GetDbConnection().ConnectionString;
-			string dbName = GetDbName(connectionString);
-
-
-			return Ok(dbName);
-		}
+		public ActionResult DBName() => Ok(DbName);
 
 		[HttpPost("migrate")]
 		public ActionResult Migrate([FromBody] AdminRequest model)
@@ -73,14 +113,10 @@ namespace Web.Controllers.Admin
 			ValidateRequest(model, _adminSettings);
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 
-			var connectionString = _context.Database.GetDbConnection().ConnectionString;
-			string dbName = GetDbName(connectionString);
+			var fileName = Path.Combine(BackupFolder, $"{DbName}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.bak");
 
-			var folderPath = BackupFolder(_adminSettings);
-			var fileName = Path.Combine(folderPath, $"{dbName}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.bak");
-
-			string cmdText = $"BACKUP DATABASE [{dbName}] TO DISK = '{fileName}'";
-			using (var conn = new SqlConnection(connectionString))
+			string cmdText = $"BACKUP DATABASE [{DbName}] TO DISK = '{fileName}'";
+			using (var conn = new SqlConnection(ConnectionString))
 			{
 				conn.Open();
 				using (SqlCommand cmd = new SqlCommand(cmdText, conn))
@@ -100,7 +136,7 @@ namespace Web.Controllers.Admin
 			ValidateRequest(model, _adminSettings);
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 			
-			var folderPath = BackupFolder(_adminSettings);
+			var folderPath = BackupFolder;
 		
 			_context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 			

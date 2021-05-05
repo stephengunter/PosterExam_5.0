@@ -18,15 +18,21 @@ using ApplicationCore;
 using ApplicationCore.DI;
 using ApplicationCore.Authorization;
 using ApplicationCore.Hubs;
+using Web.Hubs;
 
 namespace Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
+            IsDevelopment = env.IsDevelopment();
             Configuration = configuration;
         }
+
+        bool IsDevelopment;
+
         string ClientUrl => Configuration["AppSettings:ClientUrl"];
 
         string AdminUrl => Configuration["AppSettings:AdminUrl"];
@@ -83,7 +89,11 @@ namespace Web
 
             #endregion
 
-            services.AddSwagger("PosterExamStarter", "v1");
+            if (IsDevelopment)
+            {
+                services.AddSwagger("PosterExamStarter", "v1");
+            }
+           
 
             services.AddDtoMapper();
 
@@ -153,8 +163,8 @@ namespace Web
             services.AddSingleton<IHubConnectionManager, HubConnectionManager>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            //services.AddScoped<Web.Services.IThirdPartyPayService, Web.Services.EcPayService>();
-            //services.AddScoped<Web.Services.ISubscribesService, Web.Services.SubscribesService>();
+            services.AddScoped<Web.Services.IThirdPartyPayService, Web.Services.EcPayService>();
+            services.AddScoped<Web.Services.ISubscribesService, Web.Services.SubscribesService>();
 
             return AutofacRegister.Register(services);
         }
@@ -180,12 +190,16 @@ namespace Web
 
             app.UseHangfireDashboard();
 
-
-            app.UseSwaggerUI(c =>
+            if (env.IsDevelopment())
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "PosterExam");
-            });
-            app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "PosterExam");
+                });
+
+                app.UseSwagger();
+            }
+            
 
             app.UseAuthentication();
 
@@ -195,11 +209,11 @@ namespace Web
 
             app.UseAuthorization();
 
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllers();
-            //    endpoints.MapHub<NotificationsHub>("/notifications");
-            //});
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<NotificationsHub>("/notifications");
+            });
         }
     }
 }

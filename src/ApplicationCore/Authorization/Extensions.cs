@@ -4,41 +4,40 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using ApplicationCore.Helpers;
+using System.Security.Claims;
 
 namespace ApplicationCore.Authorization
 {
 	public static class IdendityHelpers
 	{
-		public static string CurrentUserId(this AuthorizationHandlerContext context)
+		public static string UserId(this IEnumerable<Claim> claims)
 		{
-			var entity = context.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
+			var entity = claims.Where(c => c.Type == "id").FirstOrDefault();
 			if (entity == null) return "";
 
 			return entity.Value;
 		}
 
-		public static IEnumerable<string> CurrentUseRoles(this AuthorizationHandlerContext context)
+		public static IEnumerable<string> Roles(this IEnumerable<Claim> claims)
 		{
-			var entity = context.User.Claims.Where(c => c.Type == "roles").FirstOrDefault();
+			var entity = claims.Where(c => c.Type == "roles").FirstOrDefault();
 			if (entity == null) return null;
 
 
 			return entity.Value.Split(',');
 		}
 
-
-		public static string CurrentUserName(this AuthorizationHandlerContext context)
+		public static string UserName(this IEnumerable<Claim> claims)
 		{
-			var entity = context.User.Claims.Where(c => c.Type == "sub").FirstOrDefault();
+			var entity = claims.Where(c => c.Type == "sub").FirstOrDefault();
 			if (entity == null) return "";
 
 			return entity.Value;
-
-
 		}
-		public static bool CurrentUserIsDev(this AuthorizationHandlerContext context)
+
+		public static bool IsDev(this IEnumerable<Claim> claims)
 		{
-			var roles = CurrentUseRoles(context);
+			var roles = Roles(claims);
 			if (roles.IsNullOrEmpty()) return false;
 
 			string devRoleName = AppRoles.Dev.ToString();
@@ -46,10 +45,9 @@ namespace ApplicationCore.Authorization
 
 			return match != null;
 		}
-
-		public static bool CurrentUserIsBoss(this AuthorizationHandlerContext context)
+		public static bool IsBoss(this IEnumerable<Claim> claims)
 		{
-			var roles = CurrentUseRoles(context);
+			var roles = Roles(claims);
 			if (roles.IsNullOrEmpty()) return false;
 
 			string bossRoleName = AppRoles.Boss.ToString();
@@ -57,13 +55,12 @@ namespace ApplicationCore.Authorization
 
 			return match != null;
 		}
-
-		public static bool CurrentUserIsSubscriber(this AuthorizationHandlerContext context)
+		public static bool IsSubscriber(this IEnumerable<Claim> claims)
 		{
-			var roles = CurrentUseRoles(context);
+			var roles = Roles(claims);
 			if (roles.IsNullOrEmpty()) return false;
 
-			string subscriberRoleName = AppRoles.Boss.ToString();
+			string subscriberRoleName = AppRoles.Subscriber.ToString();
 			var match = roles.Where(r => r.EqualTo(subscriberRoleName)).FirstOrDefault();
 
 			return match != null;

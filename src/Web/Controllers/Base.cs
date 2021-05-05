@@ -9,8 +9,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using Microsoft.AspNetCore.Cors;
-using System.Data.SqlClient;
-using ApplicationCore;
+using ApplicationCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -20,35 +19,13 @@ namespace Web.Controllers
 	{
 		protected string RemoteIpAddress => Request.HttpContext.Connection.RemoteIpAddress?.ToString();
 
-		protected string CurrentUserName => User.Claims.IsNullOrEmpty() ? "" : User.Claims.Where(c => c.Type == "sub").FirstOrDefault().Value;
+		protected string CurrentUserName => User.Claims.UserName();
 
-		protected string CurrentUserId => User.Claims.IsNullOrEmpty() ? "" : User.Claims.Where(c => c.Type == "id").FirstOrDefault().Value;
+		protected string CurrentUserId => User.Claims.UserId();
 
-		protected IEnumerable<string> CurrentUseRoles
-		{
-			get
-			{
-				var entity = User.Claims.Where(c => c.Type == "roles").FirstOrDefault();
-				if (entity == null) return null;
-				return entity.Value.Split(',');
-			}
-			
-		}
+		protected IEnumerable<string> CurrentUseRoles => User.Claims.Roles();
 
-		protected bool CurrentUserIsSubscriber
-		{
-			get
-			{
-				var roles = CurrentUseRoles;
-				if (roles.IsNullOrEmpty()) return false;
-
-				string subscriberRoleName = AppRoles.Subscriber.ToString();
-
-				var match = roles.Where(r => r.EqualTo(subscriberRoleName)).FirstOrDefault();
-
-				return match != null;
-			}
-		}
+		protected bool CurrentUserIsSubscriber => User.Claims.IsSubscriber();
 
 		protected IActionResult RequestError(string key, string msg)
 		{
@@ -88,20 +65,19 @@ namespace Web.Controllers
 	[Authorize(Policy = "Admin")]
 	public class BaseAdminController : BaseController
 	{
-		protected string BackupFolder(AdminSettings adminSettings)
-		{
-			var path = Path.Combine(adminSettings.BackupPath, DateTime.Today.ToDateNumber().ToString());
-			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-
-			return path;
-		}
-
-		protected string GetDbName(string connectionString) => new SqlConnectionStringBuilder(connectionString).InitialCatalog;
-
 		protected void ValidateRequest(AdminRequest model, AdminSettings adminSettings)
 		{
 			if (model.Key != adminSettings.Key) ModelState.AddModelError("key", "認證錯誤");
 
 		}
 	}
+
+	
+	[Route("tests/[controller]")]
+	public abstract class BaseTestController : BaseController
+	{
+
+	}
+
+
 }

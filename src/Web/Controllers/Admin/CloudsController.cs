@@ -27,22 +27,36 @@ namespace Web.Controllers.Admin
 			_cloudStorageService = cloudStorageService;
 		}
 
-		
+		#region Properties
+		string _backupFolder;
+		string BackupFolder
+		{
+			get
+			{
+				if (String.IsNullOrEmpty(_backupFolder))
+				{
+					var path = Path.Combine(_adminSettings.BackupPath, DateTime.Today.ToDateNumber().ToString());
+					if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+					_backupFolder = path;
+				}
+				return _backupFolder;
+			}
+		}
+		#endregion
 		[HttpPost("")]
 		public async Task<ActionResult> DbBackups([FromBody] AdminRequest model)
 		{
 			ValidateRequest(model, _adminSettings);
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 
-			var folderPath = BackupFolder(_adminSettings);
 			string storageFolder = DateTime.Today.ToDateNumber().ToString();
 
-			foreach (var filePath in Directory.GetFiles(folderPath))
+			foreach (var filePath in Directory.GetFiles(BackupFolder))
 			{
 				var fileInfo = new FileInfo(filePath);
 				await _cloudStorageService.UploadFileAsync(filePath, $"{storageFolder}/{fileInfo.Name}");
 			}
-			
 
 			return Ok();
 		}

@@ -116,6 +116,8 @@ namespace Web.Controllers.Admin
 		#endregion
 
 
+
+		
 		[HttpPost("year-recruits")]
 		public async Task<ActionResult> StoreYearRecruits(AdminRequest model)
 		{

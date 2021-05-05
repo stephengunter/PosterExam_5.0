@@ -14,9 +14,11 @@ using Web.Models;
 using ApplicationCore.Specifications;
 using Web.Helpers;
 using Web.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers.Admin
 {
+	[Authorize(Policy = "Subscriber")]
 	public class NotesController : BaseAdminController
 	{
 		private readonly INotesService _notesService;

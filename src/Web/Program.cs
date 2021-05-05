@@ -6,6 +6,7 @@ using NLog.Web;
 using Microsoft.AspNetCore;
 using ApplicationCore.DataAccess;
 using System.Threading.Tasks;
+using ApplicationCore.Helpers;
 
 namespace Web
 {
@@ -15,11 +16,13 @@ namespace Web
 		{
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             try
             {
                 var host = CreateWebHostBuilder(args).Build();
                 logger.Debug("init main. environment: " + environment);
-                if (environment.Equals("Development"))
+
+                if (environment.EqualTo("Development"))
                 {
                     Task.Run(() => AppDBSeed.EnsureSeedData(host.Services).Wait());
                 }
