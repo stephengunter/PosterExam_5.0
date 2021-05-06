@@ -15,6 +15,9 @@ namespace ApplicationCore.Settings
 
 		public string UploadPath { get; set; }
 		public string TemplatePath { get; set; }
+
+
+		public string ApiVersion { get; set; }
 	}
 
 	

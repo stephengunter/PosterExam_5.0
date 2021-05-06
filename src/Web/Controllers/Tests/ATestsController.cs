@@ -15,11 +15,11 @@ namespace Web.Controllers.Tests
 {
     public class ATestsController : BaseTestController
     {
-        private readonly IDataService _dataService;
+        private readonly AppSettings _appSettings;
 
-        public ATestsController(IDataService dataService)
+        public ATestsController(IOptions<AppSettings> appSettings)
         {
-            _dataService = dataService;
+            _appSettings = appSettings.Value;
 
         }
 
@@ -28,9 +28,21 @@ namespace Web.Controllers.Tests
         [HttpGet]
         public ActionResult Index()
         {
-            
-
             return Ok();
+        }
+
+
+        [HttpGet("version")]
+        public ActionResult Version()
+        {
+            return Ok(_appSettings.ApiVersion);
+        }
+
+
+        [HttpGet("ex")]
+        public ActionResult Ex()
+        {
+            throw new System.Exception("Test Throw Exception");
         }
     }
 }
