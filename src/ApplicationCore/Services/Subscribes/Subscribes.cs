@@ -14,6 +14,7 @@ namespace ApplicationCore.Services
 	{
 		Task<IEnumerable<Subscribe>> FetchAsync(bool active);
 		Task<IEnumerable<Subscribe>> FetchByUserAsync(string userId);
+		Task<IEnumerable<Subscribe>> FetchByPlanAsync(int planId);
 
 		Task<IEnumerable<Subscribe>> FetchAllAsync();
 		Subscribe GetById(int id);
@@ -46,6 +47,12 @@ namespace ApplicationCore.Services
 		public async Task<IEnumerable<Subscribe>> FetchByUserAsync(string userId)
 		{
 			var spec = new SubscribeUserFilterSpecification(userId);
+			return await _subscribeRepository.ListAsync(spec);
+		}
+
+		public async Task<IEnumerable<Subscribe>> FetchByPlanAsync(int planId)
+		{
+			var spec = new SubscribePlanFilterSpecification(planId);
 			return await _subscribeRepository.ListAsync(spec);
 		}
 

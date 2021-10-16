@@ -27,7 +27,19 @@ namespace ApplicationCore.ViewServices
 		public static List<SubscribeViewModel> MapViewModelList(this IEnumerable<Subscribe> subscribes, IMapper mapper)
 			=> subscribes.Select(item => MapViewModel(item, mapper)).ToList();
 
-		
+
+		public static PagedList<Subscribe, SubscribeViewModel> GetPagedList(this IEnumerable<Subscribe> subscribes, IMapper mapper, int page = 1, int pageSize = 999)
+		{
+			var pageList = new PagedList<Subscribe, SubscribeViewModel>(subscribes, page, pageSize);
+
+			pageList.ViewList = pageList.List.MapViewModelList(mapper);
+
+			pageList.List = null;
+
+			return pageList;
+		}
+
+
 		public static Subscribe MapEntity(this SubscribeViewModel model, IMapper mapper, string currentUserId)
 		{
 			var entity = mapper.Map<SubscribeViewModel, Subscribe>(model);
@@ -42,10 +54,8 @@ namespace ApplicationCore.ViewServices
 		}
 
 		public static IEnumerable<Subscribe> GetOrdered(this IEnumerable<Subscribe> subscribes)
-		{
-			return subscribes.OrderByDescending(item => item.StartDate);
-
-		}
+			=> subscribes.HasItems() ? subscribes.OrderByDescending(item => item.StartDate)
+									 : new List<Subscribe>();
 
 	}
 }

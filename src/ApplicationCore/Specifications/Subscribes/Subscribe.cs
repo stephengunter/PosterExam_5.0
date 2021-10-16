@@ -38,4 +38,14 @@ namespace ApplicationCore.Specifications
             AddInclude(subscribe => subscribe.User);
         }
     }
+
+    public class SubscribePlanFilterSpecification : BaseSpecification<Subscribe>
+    {
+        public SubscribePlanFilterSpecification(int planId) : base(item => !item.Removed && item.PlanId == planId)
+        {
+            AddInclude(subscribe => subscribe.Bill.Pays);
+            AddInclude(subscribe => subscribe.Bill.Plan);
+            AddInclude(subscribe => subscribe.User);
+        }
+    }
 }

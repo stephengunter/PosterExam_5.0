@@ -15,46 +15,32 @@ namespace ApplicationCore.Models
 
 		public int Discount { get; set; }
 
-		public ICollection<Subscribe> Subscribes { get; set; }
+		public DateTime? ClearDate { get; set; }
 
 		public DateTime? StartDate { get; set; }
 
 		public DateTime? EndDate { get; set; }
 
-		public override bool Active
-		{
-			get
-			{
-				if (!StartDate.HasValue) return false;
+		public bool Cleared => ClearDate.HasValue;
 
-				DateTime endDate = DateTime.MaxValue;
-				if (this.EndDate.HasValue) endDate = Convert.ToDateTime(this.EndDate);
+		public bool CanClear => Ended;
 
-				return (DateTime.Now >= StartDate.Value) && DateTime.Now <= endDate;
-			}
-		}
+		public override bool Active => (Before == false && Ended == false);
+		//{
+		//	get
+		//	{
+		//		if (!StartDate.HasValue) return false;
 
-		public bool Before
-		{
-			get
-			{
-				if (!StartDate.HasValue) return true;
+		//		DateTime endDate = DateTime.MaxValue;
+		//		if (this.EndDate.HasValue) endDate = Convert.ToDateTime(this.EndDate);
 
-				return DateTime.Now < StartDate.Value;
-			}
+		//		return (DateTime.Now >= StartDate.Value) && DateTime.Now <= endDate;
+		//	}
+		//}
 
-		}
+		public bool Before => StartDate.HasValue ? DateTime.Now < StartDate.Value : false;
 
-		public bool Ended
-		{
-			get
-			{
-				if (!EndDate.HasValue) return false;
-
-				return DateTime.Now > EndDate.Value;
-			}
-
-		}
+		public bool Ended => EndDate.HasValue ? DateTime.Now > EndDate.Value : false;
 
 		public bool HasDateConflict(Plan model)
 		{

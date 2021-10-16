@@ -46,7 +46,7 @@ namespace Web.Controllers.Admin
 		{
 			var model = new PlanViewModel
 			{
-				Price = 290,
+				Price = 360,
 				Discount = 50,
 				Description = "<ul><li>第二次訂閱者半價優惠</li></ul>"
 			};
@@ -147,6 +147,7 @@ namespace Web.Controllers.Admin
 			{
 				ModelState.AddModelError("discount", "折扣錯誤");
 			}
+			
 		}
 
 	}

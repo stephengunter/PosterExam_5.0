@@ -28,6 +28,9 @@ namespace ApplicationCore.Views
 
 		public string EndDateText { get; set; }
 
+		public string ClearDateText { get; set; }
+
+		public bool CanClear { get; set; }
 		public bool Before { get; set; }
 
 		public bool Ended { get; set; }
