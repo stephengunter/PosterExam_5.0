@@ -23,6 +23,7 @@ namespace ApplicationCore.Services
 		Task<Subscribe> FindCurrentSubscribeAsync(string userId);
 		Subscribe Find(Bill bill);
 		Task RemoveAsync(Subscribe subscribe);
+		void SetEndDateMany(IEnumerable<Subscribe> subscribes, DateTime? endDate);
 	}
 
 	public class SubscribesService : ISubscribesService
@@ -81,6 +82,13 @@ namespace ApplicationCore.Services
 		{
 			subscribe.Removed = true;
 			await _subscribeRepository.UpdateAsync(subscribe);
+		}
+
+		public void SetEndDateMany(IEnumerable<Subscribe> subscribes, DateTime? endDate)
+		{
+            foreach (var subscribe in subscribes) subscribe.EndDate = endDate;
+
+			_subscribeRepository.UpdateRange(subscribes);
 		}
 	}
 }

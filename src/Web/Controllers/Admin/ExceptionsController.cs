@@ -27,7 +27,7 @@ namespace Web.Controllers.Admin
 		[HttpGet("")]
 		public ActionResult Index(string start = "", string end = "", string type = "" , int page = 1, int pageSize = 10)
 		{
-			var model = new ExceptionsIndexModel();
+			var model = new ExceptionsAdminModel();
 
 			var records = _logger.FetchAllExceptions();
 			if (records.IsNullOrEmpty()) return Ok(model);

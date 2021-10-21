@@ -15,7 +15,6 @@ using Microsoft.Extensions.Options;
 using ApplicationCore.Settings;
 using ApplicationCore.Specifications;
 using Web.Controllers;
-using Web.Models.Admin;
 
 namespace Web.Controllers.Admin
 {
@@ -33,27 +32,22 @@ namespace Web.Controllers.Admin
 		}
 
 		[HttpGet("")]
-		public async Task<ActionResult> Index(int plan = 0, int page = 1, int pageSize = 10)
+		public async Task<ActionResult> Index(int plan, int page = 1, int pageSize = 10)
 		{
-			var model = new SubscribesAdminModel();
-			if (page < 0) //首次載入
+			Plan planSelected = null;
+			if (plan > 0) planSelected = await _plansService.GetByIdAsync(plan);
+
+			if (planSelected == null)
 			{
-				page = 1;
-
-				var plans = await _plansService.FetchAllAsync();
-				plans = plans.GetOrdered();
-
-				
-				model.LoadPlansOptions(plans.MapViewModelList(_mapper));
-
-				if (plan < 1 && model.PlansOptions.HasItems()) plan = model.PlansOptions.FirstOrDefault().Value;
+				ModelState.AddModelError("plan", "方案不存在");
+				return BadRequest(ModelState);
 			}
 
 			var subscribes = await _subscribesService.FetchByPlanAsync(plan);
 			subscribes = subscribes.GetOrdered();
 
-			model.PagedList = subscribes.GetPagedList(_mapper, page, pageSize);
-			return Ok(model);
+			if (page < 1) page = 1;
+			return Ok(subscribes.GetPagedList(_mapper, page, pageSize));
 		}
 
 	}

@@ -21,24 +21,34 @@ namespace Web.Controllers.Admin
 	public class PlansController : BaseAdminController
 	{
 		private readonly IPlansService _plansService;
+		private readonly ISubscribesService _subscribesService;
+		private readonly IUsersService _usersService;
 		private readonly IMapper _mapper;
 
-		public PlansController(IPlansService plansService, IMapper mapper)
+		public PlansController(IPlansService plansService, ISubscribesService subscribesService, IUsersService usersService, IMapper mapper)
 		{
 			_plansService = plansService;
+			_subscribesService = subscribesService;
+			_usersService = usersService;
 			_mapper = mapper;
 		}
 
 		[HttpGet("")]
-		public async Task<ActionResult> Index(int active)
+		public async Task<ActionResult> Index(int active = -1)
 		{
-			bool isAcive = active.ToBoolean();
-			var plans = await _plansService.FetchAsync(isAcive);
-
-			plans = plans.GetOrdered();
-
-			var models = plans.MapViewModelList(_mapper);
-			return Ok(models);
+			if (active < 0)
+			{
+				var allPlans = await _plansService.FetchAllAsync();
+				allPlans = allPlans.GetOrdered();
+				return Ok(allPlans.MapViewModelList(_mapper));
+			}
+			else {
+				bool isAcive = active.ToBoolean();
+				var plans = await _plansService.FetchAsync(isAcive);
+				plans = plans.GetOrdered();
+				return Ok(plans.MapViewModelList(_mapper));
+			}
+			
 		}
 
 		[HttpGet("create")]
@@ -90,6 +100,38 @@ namespace Web.Controllers.Admin
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 
 			await _plansService.UpdateAsync(existingEntity, plan);
+
+			var subscribes = await _subscribesService.FetchByPlanAsync(plan.Id);
+			if(subscribes.HasItems()) _subscribesService.SetEndDateMany(subscribes, plan.EndDate);
+
+
+			return Ok();
+		}
+
+		[HttpPut("clear/{id}")]
+		public async Task<ActionResult> Clear(int id)
+		{
+			var plan = await _plansService.GetByIdAsync(id);
+			if (plan == null) return NotFound();
+
+			if (!plan.CanClear)
+			{
+				ModelState.AddModelError("canClear", "此方案無法結算");
+				return BadRequest(ModelState);
+			}
+
+			var subscribes = await _subscribesService.FetchByPlanAsync(plan.Id);
+			if (subscribes.HasItems())
+			{
+				var userIds = subscribes.Select(x => x.UserId);
+                foreach (var userId in userIds)
+                {
+					await _usersService.RemoveSubscriberRoleAsync(userId);
+				}
+			}
+
+			plan.ClearDate = DateTime.Now;
+			await _plansService.UpdateAsync(plan);
 
 			return Ok();
 		}

@@ -24,7 +24,7 @@ namespace ApplicationCore.Views
 
 		public DateTime? DeadLine { get; set; }
 
-		public string DeadLineText { get; set; }
+		public string DeadLineText => DeadLine.ToDateString();
 
 		public bool Expired { get; set; }
 
@@ -36,9 +36,11 @@ namespace ApplicationCore.Views
 
 		public DateTime? PayedDate { get; set; }
 
-		public string PayedDateText { get; set; }
+		public string PayedDateText => PayedDate.ToDateTimeString();
 
 		public PlanViewModel Plan { get; set; }
+
+		public UserViewModel User { get; set; }
 
 		public ICollection<PayViewModel> Pays { get; set; } = new List<PayViewModel>();
 
@@ -51,6 +53,8 @@ namespace ApplicationCore.Views
 				return Pays.Where(p => !p.Removed && !p.HasMoney && p.PayWay == PaymentTypes.ATM.ToString()).OrderByDescending(p => p.CreatedAt).FirstOrDefault();
 			}
 		}
+
+		public override string StatusText => Payed ? "已付款" : "未付款";
 
 	}
 }

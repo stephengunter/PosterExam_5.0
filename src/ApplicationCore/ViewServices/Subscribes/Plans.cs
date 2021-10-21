@@ -26,7 +26,7 @@ namespace ApplicationCore.ViewServices
 
 			model.StartDateText = plan.StartDate.ToDateString();
 			model.EndDateText = plan.EndDate.ToDateString();
-			model.ClearDateText = plan.ClearDate.ToDateString();
+
 			return model;
 		}
 
