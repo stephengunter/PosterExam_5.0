@@ -17,6 +17,8 @@ namespace ApplicationCore.Views
 
 		public decimal Money { get; set; }
 
+		public DateTime? PayedDate { get; set; }
+
 		public string PayWay { get; set; }
 
 		public string PayWayTitle { get; set; }
@@ -30,6 +32,10 @@ namespace ApplicationCore.Views
 		public string Provider { get; set; }
 		
 		public bool HasMoney { get; set; }
+
+		public string TradeData { get; set; } //json string
+
+		public string PayedDateText => PayedDate.ToDateTimeString();
 
 	}
 

@@ -69,17 +69,9 @@ namespace ApplicationCore.Helpers
 
 			return (str.ToLower() == "true");
 		}
-		public static bool ToBoolean(this int val)
-		{
-			return val > 0;
-		}
+		public static bool ToBoolean(this int val) => val > 0;
 
-		public static int ToInt(this bool val)
-		{
-			if (val) return 1;
-			return 0;
-
-		}
+		public static int ToInt(this bool val) => val ? 1 : 0;
 
 		public static List<int> SplitToIntList(this string str, char splitBy = ',')
 		{

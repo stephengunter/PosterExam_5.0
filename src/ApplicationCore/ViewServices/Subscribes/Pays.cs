@@ -28,21 +28,26 @@ namespace ApplicationCore.ViewServices
 		}
 
 		public static PayWayViewModel MapViewModel(this PayWay payWay, IMapper mapper)
-		{ 
-		    var model = mapper.Map<PayWayViewModel>(payWay);
-			
-			return model;
-		}
+			=> mapper.Map<PayWayViewModel>(payWay);
 
 		
-
 		public static List<PayViewModel> MapViewModelList(this IEnumerable<Pay> pays, IMapper mapper, IEnumerable<PayWay> payWays = null)
 			=> pays.Select(item => MapViewModel(item, mapper, payWays)).ToList();
 
 		public static List<PayWayViewModel> MapViewModelList(this IEnumerable<PayWay> payWays, IMapper mapper)
 			=> payWays.Select(item => MapViewModel(item, mapper)).ToList();
 
-		
+
+		public static PagedList<Pay, PayViewModel> GetPagedList(this IEnumerable<Pay> pays, IMapper mapper, IEnumerable<PayWay> payWays = null, int page = 1, int pageSize = 999)
+		{
+			var pageList = new PagedList<Pay, PayViewModel>(pays, page, pageSize);
+
+			pageList.ViewList = pageList.List.MapViewModelList(mapper, payWays);
+
+			pageList.List = null;
+
+			return pageList;
+		}
 
 		public static PayWay MapEntity(this PayWayViewModel model, IMapper mapper, string currentUserId)
 		{
@@ -54,11 +59,11 @@ namespace ApplicationCore.ViewServices
 			return entity;
 		}
 
-		public static IEnumerable<PayWay> GetOrdered(this IEnumerable<PayWay> payWays)
-		{
-			return payWays.OrderBy(item => item.Order);
+		public static IEnumerable<Pay> GetOrdered(this IEnumerable<Pay> pays)
+			=> pays.OrderByDescending(item => item.CreatedAt);
 
-		}
+		public static IEnumerable<PayWay> GetOrdered(this IEnumerable<PayWay> payWays)
+			=> payWays.OrderBy(item => item.Order);
 
 	}
 }

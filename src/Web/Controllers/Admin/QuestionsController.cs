@@ -42,7 +42,7 @@ namespace Web.Controllers.Admin
 			
 			if (page < 1)
 			{
-				var model = new QuestionsIndexModel();
+				var model = new QuestionsAdminModel();
 				await LoadOptionsAsync(model);
 
 				return Ok(model);
@@ -116,7 +116,7 @@ namespace Web.Controllers.Admin
 
 		}
 
-		async Task LoadOptionsAsync(QuestionsIndexModel model)
+		async Task LoadOptionsAsync(QuestionsAdminModel model)
 		{
 			//Subjects
 			var subjects = await _subjectsService.FetchAsync();

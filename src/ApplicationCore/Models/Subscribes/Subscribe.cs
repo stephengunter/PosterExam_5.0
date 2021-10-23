@@ -11,6 +11,8 @@ namespace ApplicationCore.Models
 
 		public int BillId { get; set; }
 
+		public int PlanId { get; set; }
+
 		public DateTime? StartDate { get; set; }
 
 		public DateTime? EndDate { get; set; }
@@ -29,6 +31,7 @@ namespace ApplicationCore.Models
 			{
 				BillId = bill.Id,
 				UserId = bill.UserId,
+				PlanId = bill.PlanId,
 				StartDate = DateTime.Now > plan.StartDate ? DateTime.Now : plan.StartDate,
 				EndDate = plan.EndDate
 			};

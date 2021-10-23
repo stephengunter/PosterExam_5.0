@@ -12,10 +12,9 @@ namespace ApplicationCore.Services
 {
 	public interface IBillsService
 	{
-		Task<IEnumerable<Bill>> FetchAsync(bool active);
 		Task<IEnumerable<Bill>> FetchByUserAsync(string userId);
 		Task<IEnumerable<Bill>> FetchByUserAsync(User user, Plan plan);
-
+		Task<List<int>> FetchIdsByPlanAsync(Plan plan);
 		Task<IEnumerable<Bill>> FetchAllAsync();
 		Bill GetById(int id);
 		Task UpdateAsync(Bill bill);
@@ -36,14 +35,6 @@ namespace ApplicationCore.Services
 
 		public async Task UpdateAsync(Bill bill) => await _billRepository.UpdateAsync(bill);
 
-		public async Task<IEnumerable<Bill>> FetchAsync(bool active)
-		{
-			var bills = await FetchAllAsync();
-			if (bills.IsNullOrEmpty()) return null;
-
-			return bills.Where(x => x.Active == active);
-		}
-
 		public async Task<IEnumerable<Bill>> FetchByUserAsync(string userId)
 		{
 			var spec = new BillFilterSpecification(new User { Id = userId });
@@ -54,6 +45,13 @@ namespace ApplicationCore.Services
 		{
 			var spec = new BillFilterSpecification(user, plan);
 			return await _billRepository.ListAsync(spec);
+		}
+
+		public async Task<List<int>> FetchIdsByPlanAsync(Plan plan)
+		{
+			var spec = new BillSimpleFilterSpecification(plan);
+			var list = await _billRepository.ListAsync(spec);
+			return list.Select(x => x.Id).ToList();
 		}
 
 		public async Task<IEnumerable<Bill>> FetchAllAsync() => await _billRepository.ListAsync(new BillFilterSpecification());

@@ -10,6 +10,10 @@ namespace ApplicationCore.Views
 	{
 		public int Id { get; set; }
 
+		public string UserId { get; set; }
+
+		public UserViewModel User { get; set; }
+
 		public int BillId { get; set; }
 
 		public BillViewModel Bill { get; set; }

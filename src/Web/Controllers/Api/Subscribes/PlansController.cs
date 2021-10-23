@@ -30,8 +30,8 @@ namespace Web.Controllers.Api
 		public async Task<ActionResult> Index()
 		{
 			var plan = await _subscribesService.FindActivePlanAsync();
-			if (plan == null) return NotFound();
-			
+			if (plan == null) return Ok();
+
 			return Ok(plan.MapViewModel(_mapper));
 			
 		}

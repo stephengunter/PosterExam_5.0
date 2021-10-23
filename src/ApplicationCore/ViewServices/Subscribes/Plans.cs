@@ -26,6 +26,7 @@ namespace ApplicationCore.ViewServices
 
 			model.StartDateText = plan.StartDate.ToDateString();
 			model.EndDateText = plan.EndDate.ToDateString();
+
 			return model;
 		}
 
@@ -47,10 +48,8 @@ namespace ApplicationCore.ViewServices
 		}
 
 		public static IEnumerable<Plan> GetOrdered(this IEnumerable<Plan> plans)
-		{
-			return plans.OrderByDescending(item => item.StartDate);
-
-		}
+			=> plans.HasItems() ? plans.OrderByDescending(item => item.StartDate)
+								: new List<Plan>();
 
 	}
 }

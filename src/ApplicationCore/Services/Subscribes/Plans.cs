@@ -16,7 +16,6 @@ namespace ApplicationCore.Services
 		Task<IEnumerable<Plan>> FetchAllAsync();
 		Task<Plan> GetByIdAsync(int id);
 		Task<Plan> CreateAsync(Plan plan);
-	
 		Task UpdateAsync(Plan plan);
 		Task UpdateAsync(Plan existingEntity, Plan model);
 		Task RemoveAsync(Plan plan);

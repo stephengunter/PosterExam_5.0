@@ -7,7 +7,7 @@ using ApplicationCore.Settings;
 
 namespace Web.Models
 {
-    public class AnalysisIndexModel
+    public class AnalysisAdminModel
     {
         public ICollection<SubjectViewModel> Subjects { get; set; }
 

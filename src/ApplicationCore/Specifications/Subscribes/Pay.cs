@@ -2,6 +2,7 @@
 using ApplicationCore.Models;
 using Infrastructure.DataAccess;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ApplicationCore.Specifications
@@ -31,4 +32,14 @@ namespace ApplicationCore.Specifications
         }
 
     }
+
+    public class PayBillFilterSpecification : BaseSpecification<Pay>
+    {
+        public PayBillFilterSpecification(IEnumerable<int> billIds) : base(item => !item.Removed && billIds.Contains(item.BillId))
+        {
+            
+        }
+    }
+
+   
 }

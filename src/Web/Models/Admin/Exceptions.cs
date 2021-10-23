@@ -7,7 +7,7 @@ using ApplicationCore.Paging;
 
 namespace Web.Models
 {
-    public class ExceptionsIndexModel
+    public class ExceptionsAdminModel
     {
         public List<string> Period { get; set; } = new List<string>();
 

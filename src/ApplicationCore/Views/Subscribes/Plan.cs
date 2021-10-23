@@ -24,9 +24,15 @@ namespace ApplicationCore.Views
 
 		public DateTime? EndDate { get; set; }
 
-		public string StartDateText { get; set; }
+		public DateTime? ClearDate { get; set; }
 
-		public string EndDateText { get; set; }
+		public string StartDateText { get; set; }// => StartDate.ToDateString();
+
+		public string EndDateText { get; set; }// => EndDate.ToDateString();
+
+		public string ClearDateText => ClearDate.ToDateTimeString();
+
+		public bool CanClear { get; set; }
 
 		public bool Before { get; set; }
 

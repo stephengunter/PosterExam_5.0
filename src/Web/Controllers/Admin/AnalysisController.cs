@@ -43,7 +43,7 @@ namespace Web.Controllers.Admin
 		{
 			var subjects = await _subjectsService.FetchExamSubjectsAsync();
 			var recruits = await _recruitsService.FetchAsync(parentId: 0);
-			var model = new AnalysisIndexModel
+			var model = new AnalysisAdminModel
 			{
 				Subjects = subjects.MapViewModelList(_mapper),
 				Recruits = recruits.MapViewModelList(_mapper),
@@ -126,7 +126,7 @@ namespace Web.Controllers.Admin
 			}
 
 
-			var indexModel = new AnalysisIndexModel();
+			var indexModel = new AnalysisAdminModel();
 			indexModel.Results = models;
 			indexModel.ViewList = models.MapAnalysisViewList();
 
