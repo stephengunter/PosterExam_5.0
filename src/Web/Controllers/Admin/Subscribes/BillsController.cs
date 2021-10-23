@@ -67,11 +67,32 @@ namespace Web.Controllers.Admin
 			var bill = _billsService.GetById(id);
 			if (bill == null) return NotFound();
 
-			//var payways = await _paysService.FetchPayWaysAsync();
-
 			var model = bill.MapViewModel(_mapper, null);
 
 			return Ok(model);
+		}
+
+		[HttpPut("clear/{plan}")]
+		public async Task<ActionResult> Clear(int plan)
+		{
+			Plan planSelected = null;
+			if (plan > 0)
+			{
+				planSelected = await _plansService.GetByIdAsync(plan);
+				if (planSelected == null)
+				{
+					ModelState.AddModelError("plan", "方案不存在");
+					return BadRequest(ModelState);
+				}
+			}
+
+			var bills = await _billsService.FetchAllAsync();
+			if (planSelected != null) bills = bills.Where(x => x.PlanId == planSelected.Id);
+
+			var targetBills = bills.Where(x => x.TotalPayed == 0).Where(x => x.DeadLine.HasValue && DateTime.Now > x.DeadLine);
+            foreach (var target in targetBills) _billsService.Remove(target);
+
+			return Ok();
 		}
 
 	}

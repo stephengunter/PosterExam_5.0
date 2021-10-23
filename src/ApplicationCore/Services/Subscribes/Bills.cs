@@ -12,7 +12,6 @@ namespace ApplicationCore.Services
 {
 	public interface IBillsService
 	{
-		Task<IEnumerable<Bill>> FetchAsync(bool active);
 		Task<IEnumerable<Bill>> FetchByUserAsync(string userId);
 		Task<IEnumerable<Bill>> FetchByUserAsync(User user, Plan plan);
 		Task<List<int>> FetchIdsByPlanAsync(Plan plan);
@@ -35,14 +34,6 @@ namespace ApplicationCore.Services
 		public async Task<Bill> CreateAsync(Bill bill) => await _billRepository.AddAsync(bill);
 
 		public async Task UpdateAsync(Bill bill) => await _billRepository.UpdateAsync(bill);
-
-		public async Task<IEnumerable<Bill>> FetchAsync(bool active)
-		{
-			var bills = await FetchAllAsync();
-			if (bills.IsNullOrEmpty()) return null;
-
-			return bills.Where(x => x.Active == active);
-		}
 
 		public async Task<IEnumerable<Bill>> FetchByUserAsync(string userId)
 		{
