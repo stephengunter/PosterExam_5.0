@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers.Admin
 {
-	[Authorize(Policy = "Subscriber")]
 	public class NotesController : BaseAdminController
 	{
 		private readonly INotesService _notesService;
