@@ -22,6 +22,8 @@ namespace ApplicationCore.Views
 
 		public ICollection<RecruitViewModel> Recruits { get; set; } = new List<RecruitViewModel>();
 
+		public ICollection<AttachmentViewModel> Attachments { get; set; } = new List<AttachmentViewModel>();
+
 		public string RecruitsText { get; set; }
 
 		public string TermIds { get; set; }  //  Example: 1,6

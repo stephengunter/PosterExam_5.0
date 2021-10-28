@@ -54,7 +54,7 @@ namespace Web.Controllers.Admin
 		#region subject-questions
 		
 		[HttpPost("subject-questions")]
-		public async Task<ActionResult> StoreSubjectQuestions(AdminRequest model)
+		public async Task<ActionResult> StoreSubjectQuestions([FromBody] AdminRequest model)
 		{
 			ValidateRequest(model, _adminSettings);
 			if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -119,7 +119,7 @@ namespace Web.Controllers.Admin
 
 		
 		[HttpPost("year-recruits")]
-		public async Task<ActionResult> StoreYearRecruits(AdminRequest model)
+		public async Task<ActionResult> StoreYearRecruits([FromBody] AdminRequest model)
 		{
 			ValidateRequest(model, _adminSettings);
 			if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -154,7 +154,7 @@ namespace Web.Controllers.Admin
 		}
 
 		[HttpPost("note-categories")]
-		public async Task<ActionResult> NoteCategories(AdminRequest model)
+		public async Task<ActionResult> NoteCategories([FromBody] AdminRequest model)
 		{
 			ValidateRequest(model, _adminSettings);
 			if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -191,7 +191,7 @@ namespace Web.Controllers.Admin
 		#region term-notes
 
 		[HttpPost("term-notes")]
-		public async Task<ActionResult> TermNotes(AdminRequest model)
+		public async Task<ActionResult> TermNotes([FromBody] AdminRequest model)
 		{
 			ValidateRequest(model, _adminSettings);
 			if (!ModelState.IsValid) return BadRequest(ModelState);

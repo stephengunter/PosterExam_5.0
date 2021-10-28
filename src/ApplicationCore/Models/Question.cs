@@ -27,6 +27,10 @@ namespace ApplicationCore.Models
 
 		public ICollection<RecruitQuestion> RecruitQuestions { get; set; } = new List<RecruitQuestion>();
 
+
+		[NotMapped]
+		public ICollection<UploadFile> Attachments { get; set; }
+		
 		[NotMapped]
 		public ICollection<Recruit> Recruits
 		{
@@ -46,8 +50,11 @@ namespace ApplicationCore.Models
 			var termIds = TermIds.SplitToIds();
 			this.Terms = allTerms.Where(x => termIds.Contains(x.Id)).ToList();
 		}
+		public void LoadAttachments(IEnumerable<UploadFile> uploadFiles)
+		{
+			var attachments = uploadFiles.Where(x => x.PostType == PostType.Question && x.PostId == Id);
+			this.Attachments = attachments.HasItems() ? attachments.ToList() : new List<UploadFile>();
+		}
 
-
-		
 	}
 }

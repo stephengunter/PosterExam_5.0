@@ -13,6 +13,7 @@ namespace ApplicationCore.Models
 		Manual = 3,
 		Feature = 4,
 		Emoji = 5,
+		Question = 6,
 		None = -1
 	}
 

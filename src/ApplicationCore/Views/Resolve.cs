@@ -34,6 +34,8 @@ namespace ApplicationCore.Views
         public int NoteId { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
+
+        public ICollection<string> Attachments { get; set; } = new List<string>();
         public ICollection<string> Highlights { get; set; } = new List<string>();
     }
 

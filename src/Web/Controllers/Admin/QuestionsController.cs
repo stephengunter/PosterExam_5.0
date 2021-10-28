@@ -102,7 +102,9 @@ namespace Web.Controllers.Admin
 
 
 			List<Term> allTerms = (await _termsService.FetchAllAsync()).ToList();
-			List<UploadFile> attachments = (await _attachmentsService.FetchAsync(PostType.Option)).ToList();
+
+			var types = new List<PostType>() { PostType.Question, PostType.Option };
+			List<UploadFile> attachments = (await _attachmentsService.FetchByTypesAsync(types)).ToList();
 
 			var pagedList = questions.GetPagedList(_mapper, allRecruits.ToList(), attachments, allTerms, page, pageSize);
 
@@ -133,7 +135,7 @@ namespace Web.Controllers.Admin
 			recruits = recruits.GetOrdered();
 
 			_recruitsService.LoadSubItems(recruits);
-			model.Recruits = recruits.MapViewModelList(_mapper);
+            model.Recruits = recruits.MapViewModelList(_mapper);
 		}
 
 		[HttpGet("create")]
@@ -154,6 +156,14 @@ namespace Web.Controllers.Admin
 			var question = model.MapEntity(_mapper, CurrentUserId);
 
 			question = await _questionsService.CreateAsync(question);
+
+			foreach (var media in question.Attachments)
+			{
+				media.PostType = PostType.Question;
+				media.PostId = question.Id;
+				media.SetCreated(CurrentUserId);
+				await _attachmentsService.CreateAsync(media);
+			}
 
 			foreach (var option in question.Options)
 			{
@@ -193,7 +203,11 @@ namespace Web.Controllers.Admin
 			//選項的附圖
 
 			var optionIds = question.Options.Select(x => x.Id).ToList();
-			var attachments = await _attachmentsService.FetchAsync(PostType.Option, optionIds);
+
+			var questionAttachments = await _attachmentsService.FetchAsync(PostType.Question, id);
+			var optionAttachments = await _attachmentsService.FetchAsync(PostType.Option, optionIds);
+
+			var attachments = (questionAttachments ?? new List<UploadFile>()).Concat(optionAttachments ?? new List<UploadFile>());
 
 			var model = question.MapViewModel(_mapper, allRecruits.ToList(), attachments.ToList());
 			
@@ -212,6 +226,15 @@ namespace Web.Controllers.Admin
 			var question = model.MapEntity(_mapper, CurrentUserId);
 
 			await _questionsService.UpdateAsync(existingEntity, question);
+
+			foreach (var media in question.Attachments)
+			{
+				media.PostType = PostType.Question;
+				media.PostId = question.Id;
+				if (media.Id > 0) media.SetUpdated(CurrentUserId);
+				else media.SetCreated(CurrentUserId);
+			}
+			await _attachmentsService.SyncAttachmentsAsync(question, question.Attachments);
 
 			foreach (var option in question.Options)
 			{

@@ -41,6 +41,8 @@ namespace ApplicationCore.Services
 
 		Task DeleteAsync(UploadFile attachment);
 
+		Task SyncAttachmentsAsync(Question question, ICollection<UploadFile> latestList);
+
 		Task LoadAttachmentsAsync(Option option);
 
 		Task SyncAttachmentsAsync(Option option, ICollection<UploadFile> latestList);
@@ -123,6 +125,13 @@ namespace ApplicationCore.Services
 		public void UpdateRange(IEnumerable<UploadFile> attachments) => _uploadFileRepository.UpdateRange(attachments);
 
 		public void DeleteRange(IEnumerable<UploadFile> attachments) => _uploadFileRepository.DeleteRange(attachments);
+
+		public async Task SyncAttachmentsAsync(Question question, ICollection<UploadFile> latestList)
+		{
+			var existingList = await FetchAsync(PostType.Question, question.Id);
+
+			SyncAttachments(existingList.ToList(), latestList);
+		}
 
 		public async Task LoadAttachmentsAsync(Option option)
 		{

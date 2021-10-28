@@ -66,7 +66,8 @@ namespace Web.Controllers.Admin
 			List<UploadFile> attachments = null;
 			if (questions.HasItems())
 			{
-				attachments = (await _attachmentsService.FetchAsync(PostType.Option)).ToList();
+				var types = new List<PostType>() { PostType.Question, PostType.Option };
+				attachments = (await _attachmentsService.FetchByTypesAsync(types)).ToList();
 				allTerms = (await _termsService.FetchAllAsync()).ToList();
 			}
 

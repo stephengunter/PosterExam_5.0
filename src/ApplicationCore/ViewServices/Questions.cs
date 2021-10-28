@@ -38,6 +38,8 @@ namespace ApplicationCore.ViewServices
 
 			if (attachmentsList.HasItems())
 			{
+				question.LoadAttachments(attachmentsList);
+
 				foreach (var option in question.Options)
 				{
 					option.LoadAttachments(attachmentsList);
