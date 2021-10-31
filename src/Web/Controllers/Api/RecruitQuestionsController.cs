@@ -75,7 +75,7 @@ namespace Web.Controllers.Api
 			}
 
 			//取得題目與解析的附件
-			var types = new List<PostType> { PostType.Option, PostType.Resolve };
+			var types = new List<PostType> { PostType.Question, PostType.Option, PostType.Resolve };
 			var attachments = (await _attachmentsService.FetchByTypesAsync(types)).ToList();
 
 			var model = new RQViewModel();

@@ -210,7 +210,7 @@ namespace Web.Controllers.Api
 
 			await _examsService.CreateAsync(exam, CurrentUserId);
 
-			var types = new List<PostType> { PostType.Option, PostType.Resolve };
+			var types = new List<PostType> { PostType.Question, PostType.Option, PostType.Resolve };
 			var attachments = await _attachmentsService.FetchByTypesAsync(types);
 
 			var examView = exam.MapExamViewModel(_mapper, attachments.ToList());
@@ -363,7 +363,7 @@ namespace Web.Controllers.Api
 			ValidateEditRequest(exam);
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 
-			var types = new List<PostType> { PostType.Option, PostType.Resolve };
+			var types = new List<PostType> { PostType.Question, PostType.Option, PostType.Resolve };
 			var attachments = await _attachmentsService.FetchByTypesAsync(types);
 
 			return Ok(exam.MapExamViewModel(_mapper, attachments.ToList()));
@@ -409,7 +409,7 @@ namespace Web.Controllers.Api
 
 			var resolves = await _resolvesService.FetchExamResolvesAsync(exam);
 
-			var types = new List<PostType> { PostType.Option, PostType.Resolve };
+			var types = new List<PostType> { PostType.Question, PostType.Option, PostType.Resolve };
 			var attachments = await _attachmentsService.FetchByTypesAsync(types);
 
 			return Ok(exam.MapExamViewModel(_mapper, attachments.ToList(), resolves.ToList()));

@@ -201,6 +201,25 @@ namespace Web.Controllers.Admin
 			var categories = _dataService.FetchNoteCategories();
 			var subjects = categories.SelectMany(x => x.SubItems).ToList();
 
+			var yearRecruits = _dataService.FetchYearRecruits();
+			var yearRecruitQids = new Dictionary<int, List<int>>();
+			foreach (var yearRecruit in yearRecruits)
+			{
+				var questionIds = new List<int>();
+				foreach (var recruit in yearRecruit.SubItems)
+				{
+					if (recruit.SubItems.HasItems())
+					{
+						foreach (var part in recruit.SubItems) questionIds.AddRange(part.QuestionIds);
+					}
+					else
+					{
+						questionIds.AddRange(recruit.QuestionIds);
+					}
+				}
+				yearRecruitQids.Add(yearRecruit.Year, questionIds);
+			}
+
 
 			foreach (var subject in subjects)
 			{
@@ -209,7 +228,7 @@ namespace Web.Controllers.Admin
 					foreach (var term in subject.SubItems)
 					{
 						var selectedTerm = _termsService.GetById(term.Id);
-						await SaveTermNotes(selectedTerm);
+						await SaveTermNotes(selectedTerm, yearRecruitQids);
 					}
 
 				}
@@ -228,7 +247,7 @@ namespace Web.Controllers.Admin
 
 						foreach (var term in terms)
 						{
-							await SaveTermNotes(term);
+							await SaveTermNotes(term, yearRecruitQids);
 						}
 					}
 				}
@@ -237,12 +256,28 @@ namespace Web.Controllers.Admin
 			return Ok();
 		}
 
-		async Task SaveTermNotes(Term term)
+		async Task SaveTermNotes(Term term, Dictionary<int, List<int>> yearRecruitQids)
 		{
 			var termIds = new List<int>() { term.Id };
 			if (term.SubItems.HasItems()) termIds.AddRange(term.GetSubIds());
 			var notes = await _notesService.FetchAsync(termIds);
 
+			var RQIds = new List<int>();
+			foreach (KeyValuePair<int, List<int>> yearRecruitQid in yearRecruitQids)
+			{
+				foreach (int qid in term.GetQuestionIds())
+				{
+					if (yearRecruitQid.Value.Contains(qid)) RQIds.Add(qid);
+				}
+			}
+			RQIds = RQIds.Distinct().ToList();
+
+			var qids = new List<int>();
+			foreach (int qid in term.GetQuestionIds())
+			{
+				if (!RQIds.Contains(qid)) qids.Add(qid);
+			}
+			qids = qids.Distinct().ToList();
 
 			var postIds = notes.Select(x => x.Id).ToList();
 			var attachments = (await _attachmentsService.FetchAsync(PostType.Note, postIds)).ToList();
@@ -251,9 +286,11 @@ namespace Web.Controllers.Admin
 
 			var termViewModel = term.MapViewModel(_mapper);
 
-			_dataService.SaveTermNotes(termViewModel, noteViewList);
+			
+			_dataService.SaveTermNotes(termViewModel, noteViewList, RQIds, qids);
 
 		}
 		#endregion
+
 	}
 }

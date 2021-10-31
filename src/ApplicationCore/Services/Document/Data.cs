@@ -33,8 +33,10 @@ namespace ApplicationCore.Services
 
         IEnumerable<TermViewModel> FetchTermNotesBySubject(int subjectId);
         TermViewModel FindTermNotesByTerm(int termId);
+        TermNotes FindTermNotesViewByTerm(int termId);
+        IEnumerable<TermNotes> FetchTermNotesViewBySubject(int subjectId);
         void CleanTermNotes();
-        void SaveTermNotes(TermViewModel model, List<NoteViewModel> noteViewList);
+        void SaveTermNotes(TermViewModel model, List<NoteViewModel> noteViewList, List<int> RQIds, List<int> qIds);
 
     }
 
@@ -185,13 +187,17 @@ namespace ApplicationCore.Services
             return JsonConvert.DeserializeObject<TermViewModel>(doc.Content);
         }
 
+        public TermNotes FindTermNotesViewByTerm(int termId) => _termNotesRepository.Get(item => item.TermId == termId);
+        public IEnumerable<TermNotes> FetchTermNotesViewBySubject(int subjectId)
+            => _termNotesRepository.GetMany(x => x.SubjectId == subjectId);
+
         public void CleanTermNotes()
         {
             var exitingItems = _termNotesRepository.ListAll();
             if (exitingItems.HasItems()) _termNotesRepository.DeleteRange(exitingItems);
         }
 
-        public void SaveTermNotes(TermViewModel model, List<NoteViewModel> noteViewList)
+        public void SaveTermNotes(TermViewModel model, List<NoteViewModel> noteViewList, List<int> RQIds, List<int> qIds)
         {
             int termId = model.Id;
             int subjectId = model.SubjectId;
@@ -201,8 +207,17 @@ namespace ApplicationCore.Services
 
             model.LoadNotes(noteViewList);
 
+            var termNote = new TermNotes
+            {
+                SubjectId = subjectId,
+                TermId = termId,
+                Content = JsonConvert.SerializeObject(model),
+                RQIds = RQIds.JoinToStringIntegers(),
+                QIds = qIds.JoinToStringIntegers()
+            };
 
-            _termNotesRepository.Add(new TermNotes { SubjectId = subjectId, TermId = termId, Content = JsonConvert.SerializeObject(model) });
+
+            _termNotesRepository.Add(termNote);
 
 
         }

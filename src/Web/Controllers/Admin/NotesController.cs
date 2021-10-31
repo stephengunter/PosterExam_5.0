@@ -302,7 +302,7 @@ namespace Web.Controllers.Admin
 			List<Recruit> recruits = null;
 			List<Term> allTerms = null;
 
-			var types = new List<PostType> { PostType.Option };
+			var types = new List<PostType> { PostType.Question, PostType.Option };
 			var attachments = await _attachmentsService.FetchByTypesAsync(types);
 
 

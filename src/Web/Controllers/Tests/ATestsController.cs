@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace Web.Controllers.Tests
 {
@@ -19,8 +20,8 @@ namespace Web.Controllers.Tests
 
         public ATestsController(IOptions<AppSettings> appSettings)
         {
+           
             _appSettings = appSettings.Value;
-
         }
 
 

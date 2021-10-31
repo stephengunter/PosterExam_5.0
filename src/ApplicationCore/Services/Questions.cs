@@ -17,6 +17,7 @@ namespace ApplicationCore.Services
 		Task<IEnumerable<Question>> FetchByRecruitAsync(Recruit recruit, Subject subject);
 		Task<IEnumerable<Question>> FetchByIdsAsync(IEnumerable<int> ids);
 		IEnumerable<int> FetchQuestionIdsByRecruit(Recruit recruit);
+		IEnumerable<int> FetchQuestionIdsByRecruits(ICollection<int> recruitIds);
 		IEnumerable<int> FetchAllRecruitQuestionIds();
 
 		Task<Question> GetByIdAsync(int id);
@@ -148,7 +149,7 @@ namespace ApplicationCore.Services
 
 		public IEnumerable<int> FetchAllRecruitQuestionIds() => _context.RecruitQuestions.Select(item => item.QuestionId);
 
-		IEnumerable<int> FetchQuestionIdsByRecruits(ICollection<int> recruitIds)
+		public IEnumerable<int> FetchQuestionIdsByRecruits(ICollection<int> recruitIds)
 		{
 			var recruitQuestions = _context.RecruitQuestions.Where(x => recruitIds.Contains(x.RecruitId));
 			if (recruitQuestions.IsNullOrEmpty()) return new List<int>();

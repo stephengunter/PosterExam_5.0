@@ -39,7 +39,6 @@ namespace Web.Controllers.Admin
 		[HttpGet("")]
 		public async Task<ActionResult> Index(int subject, int term = 0, int recruit = 0, string keyword = "", int page = 1, int pageSize = 10)
 		{
-			
 			if (page < 1)
 			{
 				var model = new QuestionsAdminModel();

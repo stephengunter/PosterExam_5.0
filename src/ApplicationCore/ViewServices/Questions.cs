@@ -65,7 +65,7 @@ namespace ApplicationCore.ViewServices
 
 			if (question.Recruits.HasItems()) model.Recruits = question.Recruits.MapViewModelList(mapper);
 
-			if (question.Resolves.HasItems()) model.Resolves = question.Resolves.MapViewModelList(mapper);
+			if (question.Resolves.HasItems()) model.Resolves = question.Resolves.MapViewModelList(mapper, attachmentsList);
 
 			return model;
 		}

@@ -24,13 +24,15 @@ namespace ApplicationCore.ViewServices
 			var examQuestions = exam.Parts.SelectMany(p => p.Questions);
 			foreach (var examQuestion in examQuestions)
 			{
+				examQuestion.Question.LoadAttachments(attachments);
 				examQuestion.LoadOptions();
+				foreach (var option in examQuestion.Question.Options)
+                {
+					option.LoadAttachments(attachments);
+				}
 				if (hasResolves) examQuestion.LoadResolves(resolves);
 			}
-
-			var options = exam.Parts.SelectMany(p => p.Questions).SelectMany(q => q.Options);
-			foreach (var option in options) option.LoadAttachments(attachments);
-
+			
 			var model = mapper.Map<ExamViewModel>(exam);
 
 			if (hasResolves)
