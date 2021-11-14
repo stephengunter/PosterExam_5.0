@@ -71,12 +71,18 @@ namespace Web.Controllers.Admin
 			var allRecruits = await _recruitsService.GetAllAsync();
 			var recruits = allRecruits.Where(x => x.SubjectId == subject).ToList();
 
-			var models = new List<ExamSettingsViewModel>();
-
 			foreach (var recruit in recruits)
 			{
 				recruit.LoadParent(allRecruits);
 				recruit.LoadSubItems(allRecruits);
+			}
+
+			recruits = recruits.OrderByDescending(x => x.GetYear()).ToList();
+
+			var models = new List<ExamSettingsViewModel>();
+
+			foreach (var recruit in recruits)
+			{
 
 				//取得一個recruit年度的試題
 				var rqModel = await GetRQModelAsync(recruit, rootSubject);
@@ -124,7 +130,6 @@ namespace Web.Controllers.Admin
 				models.Add(model);
 
 			}
-
 
 			var indexModel = new AnalysisAdminModel();
 			indexModel.Results = models;

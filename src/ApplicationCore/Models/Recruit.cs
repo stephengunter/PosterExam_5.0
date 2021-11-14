@@ -87,6 +87,13 @@ namespace ApplicationCore.Models
 
 		public Recruit GetParent(IEnumerable<Recruit> allItems) => allItems.FirstOrDefault(x => x.Id == ParentId);
 
+		public int GetYear()
+		{
+			if (RecruitEntityType == RecruitEntityType.Year) return Year;
+			if (RecruitEntityType == RecruitEntityType.SubItem) return Parent != null ?  Parent.Year : 0;
+			return 0;
+		}
+
 		public void LoadParents(IEnumerable<Recruit> allItems)
 		{
 			var entity = this;
