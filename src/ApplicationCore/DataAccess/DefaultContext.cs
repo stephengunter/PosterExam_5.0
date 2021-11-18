@@ -18,6 +18,8 @@ namespace ApplicationCore.DataAccess
 		}
 
 		public DbSet<UploadFile> UploadFiles { get; set; }
+		public DbSet<Article> Articles { get; set; }
+		public DbSet<Category> Categories { get; set; }
 		public DbSet<RefreshToken> RefreshTokens { get; set; }
 		public DbSet<OAuth> OAuth { get; set; }
 		public DbSet<Exam> Exams { get; set; }

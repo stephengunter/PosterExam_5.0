@@ -14,6 +14,7 @@ namespace ApplicationCore.Models
 		Feature = 4,
 		Emoji = 5,
 		Question = 6,
+		Article = 7,
 		None = -1
 	}
 

@@ -29,12 +29,14 @@ namespace ApplicationCore.DataAccess
 			{
 				var defaultContext = scope.ServiceProvider.GetRequiredService<DefaultContext>();
 				defaultContext.Database.Migrate();
-				
+
 				var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 				var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
 				await SeedRoles(roleManager);
 				await SeedUsers(userManager);
+
+				await SeedCategories(defaultContext, userManager);
 
 			}
 
@@ -121,9 +123,38 @@ namespace ApplicationCore.DataAccess
 			}
 		}
 
-		
 
+		static async Task SeedCategories(DefaultContext context, UserManager<User> userManager)
+		{
+			var categories = new List<Category>();
 
+			var user = await userManager.FindByEmailAsync(AdminEmail);
 
-	}
+			var experienceCategory = new Category
+			{
+				Key = CategoryKeys.Experience,
+				Title = "上榜心得"
+			};
+			experienceCategory.SetCreated(user.Id);
+
+			categories.Add(experienceCategory);
+
+			foreach (var category in categories)
+			{
+				await AddCategoryIfNotExist(category, context);
+			}
+
+		}
+
+		static async Task AddCategoryIfNotExist(Category category, DefaultContext context)
+		{
+			var exist = context.Categories.FirstOrDefault(x => x.Key == category.Key);
+			if (exist == null)
+			{
+				context.Categories.Add(category);
+				await context.SaveChangesAsync();
+			}
+		}
+
+	}//end class
 }

@@ -168,6 +168,9 @@ namespace Web.Controllers.Admin
 			var notes = _context.Notes.ToList();
 			SaveJson(folderPath, new Note().GetType().Name, JsonConvert.SerializeObject(notes));
 
+			var articles = _context.Articles.ToList();
+			SaveJson(folderPath, new Article().GetType().Name, JsonConvert.SerializeObject(articles));
+
 			var manuals = _context.Manuals.ToList();
 			SaveJson(folderPath, new Manual().GetType().Name, JsonConvert.SerializeObject(manuals));
 
@@ -299,6 +302,16 @@ namespace Web.Controllers.Admin
 				_dBImportService.ImportNotes(_context, noteModels);
 
 				_dBImportService.SyncNotes(_context, noteModels);
+			}
+
+			file = model.GetFile(new Article().GetType().Name);
+			if (file != null)
+			{
+				content = await ReadFileTextAsync(file);
+				var articleModels = JsonConvert.DeserializeObject<List<Article>>(content);
+				_dBImportService.ImportArticles(_context, articleModels);
+
+				_dBImportService.SyncArticles(_context, articleModels);
 			}
 
 			file = model.GetFile(new Manual().GetType().Name);
