@@ -21,6 +21,7 @@ namespace ApplicationCore.Services
 		void ImportRecruits(DefaultContext _context, List<Recruit> models);
 		void ImportRecruitQuestions(DefaultContext _context, List<RecruitQuestion> models);
 		void ImportNotes(DefaultContext _context, List<Note> models);
+		void ImportArticles(DefaultContext _context, List<Article> articles);
 		void ImportManuals(DefaultContext _context, List<Manual> models);
 		void ImportFeatures(DefaultContext _context, List<Feature> models);
 		void ImportUploadFiles(DefaultContext _context, List<UploadFile> models);
@@ -36,6 +37,7 @@ namespace ApplicationCore.Services
 		void SyncRecruits(DefaultContext _context, List<Recruit> models);
 		void SyncRecruitQuestions(DefaultContext _context, List<RecruitQuestion> models);
 		void SyncNotes(DefaultContext _context, List<Note> models);
+		void SyncArticles(DefaultContext _context, List<Article> models);
 		void SyncManuals(DefaultContext _context, List<Manual> models);
 		void SyncFeatures(DefaultContext _context, List<Feature> models);
 		void SyncUploadFiles(DefaultContext _context, List<UploadFile> models);
@@ -305,6 +307,40 @@ namespace ApplicationCore.Services
 
 		}
 
+		public void ImportArticles(DefaultContext _context, List<Article> models)
+		{
+			var connectionString = _context.Database.GetDbConnection().ConnectionString;
+
+			var newArticles = new List<Article>();
+			foreach (var articleModel in models)
+			{
+
+				var existingEntity = _context.Articles.Find(articleModel.Id);
+				if (existingEntity == null) newArticles.Add(articleModel);
+				else Update(_context, existingEntity, articleModel);
+			}
+
+			_context.SaveChanges();
+
+			using (var context = new DefaultContext(connectionString))
+			{
+				context.Articles.AddRange(newArticles);
+
+				context.Database.OpenConnection();
+				try
+				{
+					context.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT Articles ON");
+					context.SaveChanges();
+					context.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT Articles OFF");
+				}
+				finally
+				{
+					context.Database.CloseConnection();
+				}
+			}
+
+		}
+
 		public void ImportManuals(DefaultContext _context, List<Manual> models)
 		{
 			var connectionString = _context.Database.GetDbConnection().ConnectionString;
@@ -547,6 +583,17 @@ namespace ApplicationCore.Services
 			var deletedEntities = _context.Notes.Where(x => !ids.Contains(x.Id)).ToList();
 
 			if (deletedEntities.HasItems()) _context.Notes.RemoveRange(deletedEntities);
+
+			_context.SaveChanges();
+		}
+
+		public void SyncArticles(DefaultContext _context, List<Article> models)
+		{
+			var ids = models.Select(x => x.Id).ToList();
+
+			var deletedEntities = _context.Articles.Where(x => !ids.Contains(x.Id)).ToList();
+
+			if (deletedEntities.HasItems()) _context.Articles.RemoveRange(deletedEntities);
 
 			_context.SaveChanges();
 		}

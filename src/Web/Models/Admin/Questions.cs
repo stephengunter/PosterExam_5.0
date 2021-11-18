@@ -8,13 +8,6 @@ using System.Threading.Tasks;
 
 namespace Web.Models
 {
-    //public class QuestionsParams
-    //{ 
-    //    public int Subject { get; set; }
-    //    public int Term { get; set; }
-    //    public int Recruit { get; set; }
-    //}
-
     public class QuestionsAdminModel
     {
         public List<SubjectViewModel> Subjects { get; set; } = new List<SubjectViewModel>();
