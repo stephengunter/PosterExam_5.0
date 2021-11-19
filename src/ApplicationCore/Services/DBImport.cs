@@ -314,7 +314,6 @@ namespace ApplicationCore.Services
 			var newArticles = new List<Article>();
 			foreach (var articleModel in models)
 			{
-
 				var existingEntity = _context.Articles.Find(articleModel.Id);
 				if (existingEntity == null) newArticles.Add(articleModel);
 				else Update(_context, existingEntity, articleModel);
@@ -409,7 +408,7 @@ namespace ApplicationCore.Services
 		public void ImportUploadFiles(DefaultContext _context, List<UploadFile> models)
 		{
 			var connectionString = _context.Database.GetDbConnection().ConnectionString;
-
+			
 			var newUploadFiles = new List<UploadFile>();
 			foreach (var uploadFileModel in models)
 			{
@@ -423,7 +422,7 @@ namespace ApplicationCore.Services
 			using (var context = new DefaultContext(connectionString))
 			{
 				context.UploadFiles.AddRange(newUploadFiles);
-
+				
 				context.Database.OpenConnection();
 				try
 				{
