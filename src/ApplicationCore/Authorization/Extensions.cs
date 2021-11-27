@@ -12,7 +12,7 @@ namespace ApplicationCore.Authorization
 	{
 		public static string UserId(this IEnumerable<Claim> claims)
 		{
-			var entity = claims.Where(c => c.Type == "id").FirstOrDefault();
+			var entity = claims.FirstOrDefault(c => c.Type == ClaimsTypeKeys.Id);
 			if (entity == null) return "";
 
 			return entity.Value;
@@ -20,7 +20,7 @@ namespace ApplicationCore.Authorization
 
 		public static IEnumerable<string> Roles(this IEnumerable<Claim> claims)
 		{
-			var entity = claims.Where(c => c.Type == "roles").FirstOrDefault();
+			var entity = claims.FirstOrDefault(c => c.Type == ClaimsTypeKeys.Roles);
 			if (entity == null) return null;
 
 
@@ -29,7 +29,7 @@ namespace ApplicationCore.Authorization
 
 		public static string UserName(this IEnumerable<Claim> claims)
 		{
-			var entity = claims.Where(c => c.Type == "sub").FirstOrDefault();
+			var entity = claims.FirstOrDefault(c => c.Type == ClaimsTypeKeys.Sub);
 			if (entity == null) return "";
 
 			return entity.Value;

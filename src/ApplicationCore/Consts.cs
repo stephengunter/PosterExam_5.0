@@ -14,6 +14,13 @@ namespace ApplicationCore
         public static string SubscribesSettings = "SubscribesSettings";
         public static string CloudStorageSettings = "CloudStorageSettings";
     }
+
+    public class ClaimsTypeKeys
+    {
+        public static string Id = "id";
+        public static string Roles = "roles";
+        public static string Sub = "sub";
+    }
     public enum HttpClients
     {
         Google
