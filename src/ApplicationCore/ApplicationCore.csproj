@@ -8,8 +8,6 @@
     <PackageReference Include="Autofac" Version="6.2.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Google.Apis" Version="1.51.0" />
-    <PackageReference Include="Google.Apis.Auth" Version="1.51.0" />
     <PackageReference Include="Google.Cloud.Storage.V1" Version="3.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="5.0.5" />
